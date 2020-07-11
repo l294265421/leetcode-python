@@ -21,9 +21,15 @@ class Solution:
     def minArray(self, numbers: List[int]) -> int:
         """
         有两种情况，
-        (1)数组是旋转过的，把数组等分为两份，如果中间数字比第一个小，最小数字就在左边那部分，否则在右边那部分；
-        需要注意的是，每部分都包含中间点；
-        (2)数组是没有旋转过的，最小数字就是第一个
+        (1)待找数组没有被旋转
+        (2) 待找数组被旋转了
+        算法需要同时适应这两种情况
+        logn的方法就是，将数组分成两部分，确定最小值在哪部分，我的方法：
+        (1) 当numbers[mid] < numbers[-1]最小值在左侧（可同时出现在两种情况下）
+        (2) 当numbers[mid] > numbers[-1]最小值在右侧（只出现在第二种情况下）
+        (3) 当numbers[mid] == numbers[-1]，不确定，去掉数组中的numbers[-1]，因为去掉它不影响找最小值（
+        可同时出现在两种情况下）
+
         :param numbers:
         :return:
         """
@@ -31,11 +37,12 @@ class Solution:
             return None
         start = 0
         end = len(numbers) - 1
-        while start <= end:
-            if numbers[0] <= numbers[-1]:
-                return numbers[0]
+        while start < end:
             mid = (start + end) // 2
-            if numbers[mid] >= numbers[start]:
+            if numbers[mid] < numbers[end]:
+                end = mid
+            elif numbers[mid] > numbers[end]:
                 start = mid + 1
             else:
-                end = mid
+                end -= 1
+        return numbers[start]
