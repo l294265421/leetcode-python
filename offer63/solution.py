@@ -38,7 +38,7 @@ class Solution:
                 max_price_index = i
         return max_price_index, max_price
 
-    def maxProfit(self, prices: List[int]) -> int:
+    def maxProfit_simple(self, prices: List[int]) -> int:
         """
         针对每一个买点，它的最大收益是在它之后的最大值处卖出；
         移动到一个买点时，如果它是之前的最大值，就需要重新找后面元素的最大值，
@@ -59,3 +59,21 @@ class Solution:
             if max_profit_of_this_point > max_profit:
                 max_profit = max_profit_of_this_point
         return max_profit
+
+    def maxProfit(self, prices: List[int]) -> int:
+        """
+        动态规划:
+        (1) 状态定义：f(i) 前i天的最大收益
+        (2) 状态转移: f(i) = max(f(i - 1), nums[i] - min)
+        :param prices:
+        :return:
+        """
+        if prices is None or len(prices) < 2:
+            return 0
+        max_profits = [0] * len(prices)
+        minimum = prices[0]
+        for i in range(1, len(prices)):
+            max_profits[i] = max(max_profits[i - 1], prices[i] - minimum)
+            if prices[i] < minimum:
+                minimum = prices[i]
+        return max_profits[-1]
